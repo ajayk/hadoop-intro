@@ -13,15 +13,19 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 
-public static class Reduce 
-  extends Reducer<Text, IntWritable, Text, IntWritable> {
-    public void reduce(Text key, Iterable<IntWritable> values, Context context) 
-      throws IOException, InterruptedException {
-        int sum = 0;
-        for (IntWritable val : values) {
-            sum += val.get();
-        }
-        context.write(key, new IntWritable(sum));
+public class IntSumReducer 
+  extends Reducer<Text,IntWritable,Text,IntWritable> {
+  private IntWritable result = new IntWritable();
+
+  public void reduce(Text key, Iterable<IntWritable> values, 
+                     Context context) 
+    throws IOException, InterruptedException {
+    int sum = 0;
+    for (IntWritable val : values) {
+      sum += val.get();
     }
- }
+    result.set(sum);
+    context.write(key, result);
+  }
+}
 
